@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>3kh0-lite - Login</title>
+    <link rel="stylesheet" href="css/login.css">
+</head>
+<body>
+    <div class="container">
+        <div class="login-form">
+            <h1>3kh0-lite</h1>
+            <div class="tabs">
+                <button class="tab-btn active" onclick="showTab('login')">Login</button>
+                <button class="tab-btn" onclick="showTab('register')">Register</button>
+            </div>
+            
+            <!-- Login Tab -->
+            <div id="login-tab" class="tab-content active">
+                <form id="login-form">
+                    <div class="form-group">
+                        <input type="text" id="login-username" placeholder="Username" required>
+                    </div>
+                    <div class="form-group">
+                        <input type="password" id="login-password" placeholder="Password" required>
+                    </div>
+                    <button type="submit">Login</button>
+                </form>
+            </div>
+            
+            <!-- Register Tab -->
+            <div id="register-tab" class="tab-content">
+                <div class="account-type-selector">
+                    <h3>Choose Account Type</h3>
+                    <div class="account-options">
+                        <div class="account-option" onclick="selectAccountType('temporary')">
+                            <div class="option-header">
+                                <h4>Temporary Account</h4>
+                                <span class="timer-badge">30 min</span>
+                            </div>
+                            <p>Quick access, auto-deletes after 30 minutes</p>
+                            <ul>
+                                <li>No message center access</li>
+                                <li>No notifications</li>
+                                <li>Limited features</li>
+                            </ul>
+                        </div>
+                        <div class="account-option" onclick="selectAccountType('permanent')">
+                            <div class="option-header">
+                                <h4>Permanent Account</h4>
+                                <span class="perm-badge">∞</span>
+                            </div>
+                            <p>Full access with all features</p>
+                            <ul>
+                                <li>Message center & DMs</li>
+                                <li>Friend system</li>
+                                <li>Notifications</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                
+                <form id="register-form" style="display: none;">
+                    <input type="hidden" id="account-type" value="">
+                    <div class="form-group">
+                        <input type="text" id="register-username" placeholder="Username" required>
+                    </div>
+                    <div class="form-group">
+                        <input type="password" id="register-password" placeholder="Password" required>
+                    </div>
+                    <div class="form-group">
+                        <input type="password" id="confirm-password" placeholder="Confirm Password" required>
+                    </div>
+                    <button type="submit">Create Account</button>
+                    <button type="button" onclick="backToAccountType()">Back</button>
+                </form>
+            </div>
+        </div>
+    </div>
+    
+    <div id="loading" class="loading hidden">
+        <div class="spinner"></div>
+        <p>Creating account...</p>
+    </div>
+    
+    <script src="js/login.js"></script>
+</body>
+</html>

@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>3kh0-lite - Dashboard</title>
+    <link rel="stylesheet" href="css/dashboard.css">
+</head>
+<body>
+    <div class="header">
+        <!-- Timer for temporary accounts (top left) -->
+        <div id="temp-timer" class="temp-timer hidden">
+            <span class="timer-icon">⏱️</span>
+            <span id="timer-text">29:59</span>
+        </div>
+        
+        <!-- User info (center) -->
+        <div class="user-info">
+            <span id="username">Loading...</span>
+            <span id="account-type" class="account-badge"></span>
+        </div>
+        
+        <!-- Icons for permanent accounts (top right) -->
+        <div id="perm-icons" class="perm-icons hidden">
+            <div class="icon-btn" id="messages-btn" onclick="toggleMessages()">
+                <span class="icon">💬</span>
+                <span id="message-count" class="notification-badge hidden">0</span>
+            </div>
+            <div class="icon-btn" id="friends-btn" onclick="toggleFriends()">
+                <span class="icon">👥</span>
+                <span id="friend-requests-count" class="notification-badge hidden">0</span>
+            </div>
+            <div class="icon-btn" id="admin-btn" onclick="toggleAdmin()" style="display: none;">
+                <span class="icon">🛡️</span>
+            </div>
+        </div>
+        
+        <button class="logout-btn" onclick="logout()">Logout</button>
+    </div>
+    
+    <!-- Messages Panel -->
+    <div id="messages-panel" class="side-panel hidden">
+        <div class="panel-header">
+            <h3>Messages</h3>
+            <button class="close-btn" onclick="toggleMessages()">×</button>
+        </div>
+        <div class="friends-list">
+            <div id="friends-for-messages"></div>
+        </div>
+        <div id="chat-area" class="chat-area hidden">
+            <div class="chat-header">
+                <button class="back-btn" onclick="backToFriendsList()">←</button>
+                <span id="chat-with">Chat</span>
+            </div>
+            <div id="messages-container" class="messages-container"></div>
+            <div class="message-input">
+                <input type="text" id="message-text" placeholder="Type a message..." maxlength="1000">
+                <button onclick="sendMessage()">Send</button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Friends Panel -->
+    <div id="friends-panel" class="side-panel hidden">
+        <div class="panel-header">
+            <h3>Friends</h3>
+            <button class="close-btn" onclick="toggleFriends()">×</button>
+        </div>
+        <div class="search-section">
+            <input type="text" id="user-search" placeholder="Search users..." onkeyup="searchUsers()">
+            <div id="search-results"></div>
+        </div>
+        <div class="friend-requests">
+            <h4>Friend Requests</h4>
+            <div id="friend-requests-list"></div>
+        </div>
+        <div class="friends-list">
+            <h4>Friends</h4>
+            <div id="friends-list"></div>
+        </div>
+    </div>
+    
+    <!-- Admin Panel -->
+    <div id="admin-panel" class="side-panel hidden">
+        <div class="panel-header">
+            <h3>Admin Panel</h3>
+            <button class="close-btn" onclick="toggleAdmin()">×</button>
+        </div>
+        <div class="search-section">
+            <input type="text" id="admin-search" placeholder="Search users..." onkeyup="searchAllUsers()">
+        </div>
+        <div class="users-list">
+            <div id="all-users-list"></div>
+        </div>
+    </div>
+    
+    <!-- Main Content -->
+    <div class="main-content">
+        <h1>Welcome to 3kh0-lite</h1>
+        <div class="games-grid">
+            <!-- Games will be loaded here -->
+        </div>
+    </div>
+    
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="js/dashboard.js"></script>
+</body>
+</html>
