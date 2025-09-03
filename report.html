@@ -33,46 +33,135 @@
                     </div>
                 </div>
 
-                <div class="form-section">
-                    <h3>Incident Details</h3>
+                <!-- Teacher Spotted Fields -->
+                <div class="form-section dynamic-section" id="teacher-fields" style="display: none;">
+                    <h3>Teacher/Staff Details</h3>
                     <div class="form-group">
-                        <label for="description">Detailed Description *</label>
-                        <textarea id="description" name="description" placeholder="Describe what happened in detail..." maxlength="2000" required></textarea>
-                        <span class="char-count">0/2000</span>
+                        <label for="teacherName">Teacher/Staff Name (if known)</label>
+                        <input type="text" id="teacherName" name="teacherName" placeholder="e.g., Mr. Smith, Ms. Johnson" data-optional>
                     </div>
-                </div>
-
-                <div class="form-section">
-                    <h3>Location & Time</h3>
                     <div class="form-group">
-                        <label for="location">Where did this occur? *</label>
+                        <label for="location">Location where spotted *</label>
                         <input type="text" id="location" name="location" placeholder="e.g., Computer Lab, Library, Classroom 205" required>
                     </div>
-                    
                     <div class="form-group">
-                        <label for="timeOfIncident">When did this happen? *</label>
+                        <label for="timeOfIncident">Time spotted *</label>
                         <input type="datetime-local" id="timeOfIncident" name="timeOfIncident" required>
                     </div>
-                </div>
-
-                <div class="form-section">
-                    <h3>Additional Information</h3>
                     <div class="form-group">
-                        <label>Were there any witnesses present? *</label>
+                        <label for="description">What were they doing? *</label>
+                        <textarea id="description" name="description" placeholder="Describe their behavior, direction they were heading, etc..." maxlength="2000" required></textarea>
+                        <span class="char-count">0/2000</span>
+                    </div>
+                    <div class="form-group">
+                        <label>Did they notice you? *</label>
                         <div class="radio-group">
                             <label><input type="radio" name="witnessPresent" value="true" required> Yes</label>
                             <label><input type="radio" name="witnessPresent" value="false" required> No</label>
                         </div>
                     </div>
+                    <div class="form-group">
+                        <label for="actionTaken">What did you do? *</label>
+                        <textarea id="actionTaken" name="actionTaken" placeholder="Did you hide, close the site, act natural, etc?" required></textarea>
+                    </div>
+                </div>
 
+                <!-- Technical Issue Fields -->
+                <div class="form-section dynamic-section" id="technical-fields" style="display: none;">
+                    <h3>Technical Problem Details</h3>
+                    <div class="form-group">
+                        <label for="deviceType">Device/System affected *</label>
+                        <input type="text" id="deviceType" name="deviceType" placeholder="e.g., School computer, personal laptop, network" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="location">Location *</label>
+                        <input type="text" id="location" name="location" placeholder="e.g., Computer Lab, Library, Classroom 205" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="timeOfIncident">When did the issue start? *</label>
+                        <input type="datetime-local" id="timeOfIncident" name="timeOfIncident" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="description">Describe the technical problem *</label>
+                        <textarea id="description" name="description" placeholder="What exactly is not working? Error messages? Steps to reproduce?" maxlength="2000" required></textarea>
+                        <span class="char-count">0/2000</span>
+                    </div>
+                    <div class="form-group">
+                        <label for="actionTaken">What have you tried? *</label>
+                        <textarea id="actionTaken" name="actionTaken" placeholder="Refresh, restart, different browser, etc?" required></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label>Are others experiencing this issue? *</label>
+                        <div class="radio-group">
+                            <label><input type="radio" name="witnessPresent" value="true" required> Yes</label>
+                            <label><input type="radio" name="witnessPresent" value="false" required> Unknown</label>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Content Issue Fields -->
+                <div class="form-section dynamic-section" id="content-fields" style="display: none;">
+                    <h3>Content Problem Details</h3>
+                    <div class="form-group">
+                        <label for="contentUrl">Page/Game URL (if applicable)</label>
+                        <input type="url" id="contentUrl" name="contentUrl" placeholder="https://..." data-optional>
+                    </div>
+                    <div class="form-group">
+                        <label for="contentName">Content Name *</label>
+                        <input type="text" id="contentName" name="contentName" placeholder="e.g., Game name, page title" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="timeOfIncident">When did you notice this? *</label>
+                        <input type="datetime-local" id="timeOfIncident" name="timeOfIncident" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="description">What's wrong with the content? *</label>
+                        <textarea id="description" name="description" placeholder="Inappropriate content, broken links, malware warning, etc..." maxlength="2000" required></textarea>
+                        <span class="char-count">0/2000</span>
+                    </div>
+                    <div class="form-group">
+                        <label for="actionTaken">What did you do? *</label>
+                        <textarea id="actionTaken" name="actionTaken" placeholder="Closed page, reported to others, took screenshot, etc?" required></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label>Should this content be removed? *</label>
+                        <div class="radio-group">
+                            <label><input type="radio" name="witnessPresent" value="true" required> Yes</label>
+                            <label><input type="radio" name="witnessPresent" value="false" required> No, just needs fixing</label>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Other Issue Fields -->
+                <div class="form-section dynamic-section" id="other-fields" style="display: none;">
+                    <h3>Other Issue Details</h3>
+                    <div class="form-group">
+                        <label for="location">Location (if applicable)</label>
+                        <input type="text" id="location" name="location" placeholder="e.g., Computer Lab, Library, Classroom 205" data-optional>
+                    </div>
+                    <div class="form-group">
+                        <label for="timeOfIncident">When did this happen? *</label>
+                        <input type="datetime-local" id="timeOfIncident" name="timeOfIncident" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="description">Describe the issue *</label>
+                        <textarea id="description" name="description" placeholder="Please provide as much detail as possible..." maxlength="2000" required></textarea>
+                        <span class="char-count">0/2000</span>
+                    </div>
+                    <div class="form-group">
+                        <label>Were there any witnesses? *</label>
+                        <div class="radio-group">
+                            <label><input type="radio" name="witnessPresent" value="true" required> Yes</label>
+                            <label><input type="radio" name="witnessPresent" value="false" required> No</label>
+                        </div>
+                    </div>
                     <div class="form-group">
                         <label for="actionTaken">What action did you take? *</label>
                         <textarea id="actionTaken" name="actionTaken" placeholder="Describe what you did in response to this incident..." required></textarea>
                     </div>
-
                     <div class="form-group">
                         <label for="additionalInfo">Any additional information</label>
-                        <textarea id="additionalInfo" name="additionalInfo" placeholder="Any other relevant details..." maxlength="1000"></textarea>
+                        <textarea id="additionalInfo" name="additionalInfo" placeholder="Any other relevant details..." maxlength="1000" data-optional></textarea>
                         <span class="char-count">0/1000</span>
                     </div>
                 </div>
