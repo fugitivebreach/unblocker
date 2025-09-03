@@ -52,8 +52,24 @@ async function checkSiteStatus(req, res, next) {
   try {
     const settings = await SiteSettings.findOne();
     
-    // Skip checks for admin and API routes
-    if (req.path.startsWith('/api/') || req.session.user?.accountType === 'admin') {
+    // Skip checks for API routes
+    if (req.path.startsWith('/api/')) {
+      return next();
+    }
+    
+    // Check if user is admin (need to fetch user from session)
+    let isAdmin = false;
+    if (req.session.userId) {
+      try {
+        const user = await User.findById(req.session.userId);
+        isAdmin = user && user.accountType === 'admin';
+      } catch (err) {
+        // Continue with non-admin flow
+      }
+    }
+    
+    // Skip checks for admin users
+    if (isAdmin) {
       return next();
     }
     
@@ -67,7 +83,7 @@ async function checkSiteStatus(req, res, next) {
     
     next();
   } catch (error) {
-    console.error('Error checking site status:', error);
+    console.error('Site status check error:', error);
     next();
   }
 }
