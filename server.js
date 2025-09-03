@@ -149,7 +149,7 @@ app.get('/api/check-auth', requireAuth, (req, res) => {
 });
 
 // Friend system routes
-app.post('/api/send-friend-request', requireAuth, requirePermanentAccount, async (req, res) => {
+app.post('/api/send-friend-request', requireAuth, requirePermanent, async (req, res) => {
   try {
     const { username } = req.body;
     const targetUser = await User.findOne({ username, isActive: true });
@@ -184,7 +184,7 @@ app.post('/api/send-friend-request', requireAuth, requirePermanentAccount, async
   }
 });
 
-app.post('/api/respond-friend-request', requireAuth, requirePermanentAccount, async (req, res) => {
+app.post('/api/respond-friend-request', requireAuth, requirePermanent, async (req, res) => {
   try {
     const { requestId, action } = req.body;
     
@@ -211,7 +211,7 @@ app.post('/api/respond-friend-request', requireAuth, requirePermanentAccount, as
   }
 });
 
-app.get('/api/friends', requireAuth, requirePermanentAccount, async (req, res) => {
+app.get('/api/friends', requireAuth, requirePermanent, async (req, res) => {
   try {
     const user = await User.findById(req.user._id).populate('friends', 'username');
     res.json({ friends: user.friends });
@@ -220,7 +220,7 @@ app.get('/api/friends', requireAuth, requirePermanentAccount, async (req, res) =
   }
 });
 
-app.get('/api/friend-requests', requireAuth, requirePermanentAccount, async (req, res) => {
+app.get('/api/friend-requests', requireAuth, requirePermanent, async (req, res) => {
   try {
     const user = await User.findById(req.user._id).populate('friendRequests.from', 'username');
     const pendingRequests = user.friendRequests.filter(req => req.status === 'pending');
@@ -230,7 +230,7 @@ app.get('/api/friend-requests', requireAuth, requirePermanentAccount, async (req
   }
 });
 
-app.get('/api/search-users', requireAuth, requirePermanentAccount, async (req, res) => {
+app.get('/api/search-users', requireAuth, requirePermanent, async (req, res) => {
   try {
     const { query } = req.query;
     const users = await User.find({
@@ -246,7 +246,7 @@ app.get('/api/search-users', requireAuth, requirePermanentAccount, async (req, r
 });
 
 // Message routes
-app.post('/api/send-message', requireAuth, requirePermanentAccount, async (req, res) => {
+app.post('/api/send-message', requireAuth, requirePermanent, async (req, res) => {
   try {
     const { recipientId, content } = req.body;
     
@@ -277,7 +277,7 @@ app.post('/api/send-message', requireAuth, requirePermanentAccount, async (req, 
   }
 });
 
-app.get('/api/messages/:userId', requireAuth, requirePermanentAccount, async (req, res) => {
+app.get('/api/messages/:userId', requireAuth, requirePermanent, async (req, res) => {
   try {
     const { userId } = req.params;
     const messages = await Message.find({
