@@ -1,13 +1,17 @@
 const express = require('express');
 const mongoose = require('mongoose');
 const session = require('express-session');
-const path = require('path');
+const bcrypt = require('bcryptjs');
 const http = require('http');
 const socketIo = require('socket.io');
+const path = require('path');
+const fs = require('fs');
 
 const User = require('./models/User');
 const Message = require('./models/Message');
-const { requireAuth, requirePermanentAccount, requireAdmin, redirectIfAuthenticated } = require('./middleware/auth');
+const SiteSettings = require('./models/SiteSettings');
+const Report = require('./models/Report');
+const { requireAuth, requirePermanent, requireAdmin, redirectIfAuthenticated } = require('./middleware/auth');
 
 const app = express();
 const server = http.createServer(app);
@@ -43,15 +47,44 @@ async function createAdminAccount() {
   }
 }
 
+// Site settings middleware - check for shutdown/maintenance modes
+async function checkSiteStatus(req, res, next) {
+  try {
+    const settings = await SiteSettings.findOne();
+    
+    // Skip checks for admin and API routes
+    if (req.path.startsWith('/api/') || req.session.user?.accountType === 'admin') {
+      return next();
+    }
+    
+    if (settings?.shutdownMode) {
+      return res.redirect('https://www.stjude.org/');
+    }
+    
+    if (settings?.maintenanceMode && req.path !== '/maintenance.html') {
+      return res.redirect('/maintenance.html');
+    }
+    
+    next();
+  } catch (error) {
+    console.error('Error checking site status:', error);
+    next();
+  }
+}
+
 // Middleware
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+
 app.use(session({
-  secret: 'your-secret-key-change-in-production',
+  secret: 'your-secret-key',
   resave: false,
   saveUninitialized: false,
-  cookie: { secure: false, maxAge: 24 * 60 * 60 * 1000 } // 24 hours
+  cookie: { secure: false }
 }));
+
+app.use(checkSiteStatus);
+app.use(express.static(__dirname));
 
 // Add MIME type for Unity WebAssembly files
 express.static.mime.define({
@@ -270,21 +303,14 @@ app.get('/api/messages/:userId', requireAuth, requirePermanentAccount, async (re
 // Admin routes
 app.get('/api/admin/users', requireAuth, requireAdmin, async (req, res) => {
   try {
-    const { search } = req.query;
-    let query = { username: { $ne: 'archiveAnt' } };
-    
-    if (search) {
-      query.username = { $regex: search, $options: 'i' };
-    }
-    
-    const users = await User.find(query).select('username accountType isActive createdAt expiresAt');
-    res.json({ users });
+    const users = await User.find({}, '-password').sort({ createdAt: -1 });
+    res.json(users);
   } catch (error) {
-    res.status(500).json({ message: 'Failed to get users' });
+    res.status(500).json({ message: 'Failed to fetch users' });
   }
 });
 
-app.post('/api/admin/disable-user', requireAuth, requireAdmin, async (req, res) => {
+app.post('/api/admin/disable-user', requireAdmin, async (req, res) => {
   try {
     const { userId } = req.body;
     await User.findByIdAndUpdate(userId, { isActive: false });
@@ -294,12 +320,120 @@ app.post('/api/admin/disable-user', requireAuth, requireAdmin, async (req, res) 
   }
 });
 
+app.post('/api/admin/enable-user', requireAdmin, async (req, res) => {
+  try {
+    const { userId } = req.body;
+    await User.findByIdAndUpdate(userId, { isActive: true });
+    res.json({ message: 'User enabled successfully' });
+  } catch (error) {
+    res.status(500).json({ message: 'Failed to enable user' });
+  }
+});
+
+// Site settings routes
+app.get('/api/admin/site-settings', requireAdmin, async (req, res) => {
+  try {
+    let settings = await SiteSettings.findOne();
+    if (!settings) {
+      settings = new SiteSettings();
+      await settings.save();
+    }
+    res.json(settings);
+  } catch (error) {
+    res.status(500).json({ message: 'Failed to fetch site settings' });
+  }
+});
+
+app.post('/api/admin/toggle-shutdown', requireAdmin, async (req, res) => {
+  try {
+    const { enabled } = req.body;
+    let settings = await SiteSettings.findOne();
+    if (!settings) {
+      settings = new SiteSettings();
+    }
+    settings.shutdownMode = enabled;
+    settings.lastUpdated = new Date();
+    settings.updatedBy = req.session.user._id;
+    await settings.save();
+    res.json({ message: 'Shutdown mode updated' });
+  } catch (error) {
+    res.status(500).json({ message: 'Failed to update shutdown mode' });
+  }
+});
+
+app.post('/api/admin/toggle-maintenance', requireAdmin, async (req, res) => {
+  try {
+    const { enabled } = req.body;
+    let settings = await SiteSettings.findOne();
+    if (!settings) {
+      settings = new SiteSettings();
+    }
+    settings.maintenanceMode = enabled;
+    settings.lastUpdated = new Date();
+    settings.updatedBy = req.session.user._id;
+    await settings.save();
+    res.json({ message: 'Maintenance mode updated' });
+  } catch (error) {
+    res.status(500).json({ message: 'Failed to update maintenance mode' });
+  }
+});
+
+// Report routes
+app.post('/api/submit-report', requireAuth, async (req, res) => {
+  try {
+    const { reportType, urgencyLevel, description, location, timeOfIncident, witnessPresent, actionTaken, additionalInfo } = req.body;
+    
+    // Generate unique report ID
+    const reportId = 'RPT-' + Date.now() + '-' + Math.random().toString(36).substr(2, 5).toUpperCase();
+    
+    const report = new Report({
+      reportId,
+      reportedBy: req.session.user._id,
+      reportType,
+      urgencyLevel,
+      description,
+      location,
+      timeOfIncident: new Date(timeOfIncident),
+      witnessPresent,
+      actionTaken,
+      additionalInfo
+    });
+    
+    await report.save();
+    res.json({ message: 'Report submitted successfully', reportId });
+  } catch (error) {
+    console.error('Report submission error:', error);
+    res.status(500).json({ message: 'Failed to submit report' });
+  }
+});
+
+app.get('/api/admin/reports', requireAdmin, async (req, res) => {
+  try {
+    const reports = await Report.find()
+      .populate('reportedBy', 'username accountType')
+      .sort({ createdAt: -1 });
+    res.json(reports);
+  } catch (error) {
+    res.status(500).json({ message: 'Failed to fetch reports' });
+  }
+});
+
+app.post('/api/admin/update-report', requireAdmin, async (req, res) => {
+  try {
+    const { reportId, status } = req.body;
+    await Report.findByIdAndUpdate(reportId, { status });
+    res.json({ message: 'Report status updated' });
+  } catch (error) {
+    res.status(500).json({ message: 'Failed to update report status' });
+  }
+});
+
 // Serve login page for root
 app.get('/', redirectIfAuthenticated, (req, res) => {
   res.sendFile(path.join(__dirname, 'login.html'));
 });
 
-// API route to get games
+// ... (rest of the code remains the same)
 app.get('/api/games', (req, res) => {
   const games = require('./config/games.json');
   res.json(games);

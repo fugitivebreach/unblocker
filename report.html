@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Submit Report - unblockedsite-v1</title>
+    <link rel="stylesheet" href="css/report.css">
+</head>
+<body>
+    <div class="container">
+        <div class="report-form">
+            <h1>🚨 Emergency Report</h1>
+            <p class="subtitle">Please fill out this form completely if you need to report an incident</p>
+            
+            <form id="report-form">
+                <div class="form-section">
+                    <h3>Report Type</h3>
+                    <div class="radio-group">
+                        <label><input type="radio" name="reportType" value="teacher_spotted" required> Teacher/Staff Spotted</label>
+                        <label><input type="radio" name="reportType" value="technical_issue" required> Technical Issue</label>
+                        <label><input type="radio" name="reportType" value="content_issue" required> Content Problem</label>
+                        <label><input type="radio" name="reportType" value="other" required> Other</label>
+                    </div>
+                </div>
+
+                <div class="form-section">
+                    <h3>Urgency Level</h3>
+                    <div class="radio-group">
+                        <label><input type="radio" name="urgencyLevel" value="low" required> Low - No immediate threat</label>
+                        <label><input type="radio" name="urgencyLevel" value="medium" required> Medium - Potential issue</label>
+                        <label><input type="radio" name="urgencyLevel" value="high" required> High - Immediate attention needed</label>
+                        <label><input type="radio" name="urgencyLevel" value="critical" required> Critical - Emergency situation</label>
+                    </div>
+                </div>
+
+                <div class="form-section">
+                    <h3>Incident Details</h3>
+                    <div class="form-group">
+                        <label for="description">Detailed Description *</label>
+                        <textarea id="description" name="description" placeholder="Describe what happened in detail..." maxlength="2000" required></textarea>
+                        <span class="char-count">0/2000</span>
+                    </div>
+                </div>
+
+                <div class="form-section">
+                    <h3>Location & Time</h3>
+                    <div class="form-group">
+                        <label for="location">Where did this occur? *</label>
+                        <input type="text" id="location" name="location" placeholder="e.g., Computer Lab, Library, Classroom 205" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="timeOfIncident">When did this happen? *</label>
+                        <input type="datetime-local" id="timeOfIncident" name="timeOfIncident" required>
+                    </div>
+                </div>
+
+                <div class="form-section">
+                    <h3>Additional Information</h3>
+                    <div class="form-group">
+                        <label>Were there any witnesses present? *</label>
+                        <div class="radio-group">
+                            <label><input type="radio" name="witnessPresent" value="true" required> Yes</label>
+                            <label><input type="radio" name="witnessPresent" value="false" required> No</label>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="actionTaken">What action did you take? *</label>
+                        <textarea id="actionTaken" name="actionTaken" placeholder="Describe what you did in response to this incident..." required></textarea>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="additionalInfo">Any additional information</label>
+                        <textarea id="additionalInfo" name="additionalInfo" placeholder="Any other relevant details..." maxlength="1000"></textarea>
+                        <span class="char-count">0/1000</span>
+                    </div>
+                </div>
+
+                <div class="form-actions">
+                    <button type="button" onclick="goBack()" class="btn-secondary">Cancel</button>
+                    <button type="submit" class="btn-primary">Submit Report</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div id="loading" class="loading hidden">
+        <div class="spinner"></div>
+        <p>Submitting report...</p>
+    </div>
+
+    <footer class="copyright-footer">
+        <p>&copy; 2025 ArchiveAnt. All rights reserved.</p>
+    </footer>
+
+    <script src="js/report.js"></script>
+</body>
+</html>

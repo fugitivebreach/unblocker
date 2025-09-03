@@ -4,15 +4,14 @@ let currentChatUser = null;
 let timerInterval = null;
 
 // Initialize dashboard
-window.addEventListener('load', async () => {
+function initDashboard() {
     loadThemeFromStorage();
-    await loadUserInfo();
-    setupSocketConnection();
-    loadFriends();
-    loadFriendRequests();
-    startTimerIfNeeded();
+    loadSiteSettings();
+    loadUserInfo();
     loadGames();
-});
+}
+
+window.addEventListener('load', initDashboard);
 
 async function loadUserInfo() {
     try {
@@ -406,7 +405,7 @@ async function loadAllUsers() {
                 <div class="user-actions">
                     ${user.isActive ? 
                         `<button onclick="disableUser('${user._id}')">Disable</button>` : 
-                        '<span style="color: #666;">Disabled</span>'
+                        `<button onclick="enableUser('${user._id}')" class="enable">Enable</button>`
                     }
                 </div>
             `;
@@ -444,7 +443,7 @@ async function searchAllUsers() {
                 <div class="user-actions">
                     ${user.isActive ? 
                         `<button onclick="disableUser('${user._id}')">Disable</button>` : 
-                        '<span style="color: #666;">Disabled</span>'
+                        `<button onclick="enableUser('${user._id}')" class="enable">Enable</button>`
                     }
                 </div>
             `;
@@ -528,6 +527,147 @@ function loadThemeFromStorage() {
     const themeIcon = document.getElementById('theme-icon');
     if (themeIcon) {
         themeIcon.textContent = savedTheme === 'dark' ? '☀️' : '🌙';
+    }
+}
+
+function openReport() {
+    window.location.href = '/report.html';
+}
+
+async function toggleShutdown() {
+    const toggle = document.getElementById('shutdown-toggle');
+    try {
+        const response = await fetch('/api/admin/toggle-shutdown', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ enabled: toggle.checked })
+        });
+        
+        if (!response.ok) {
+            toggle.checked = !toggle.checked;
+            alert('Failed to toggle shutdown mode');
+        }
+    } catch (error) {
+        toggle.checked = !toggle.checked;
+        alert('Error toggling shutdown mode');
+    }
+}
+
+async function toggleMaintenance() {
+    const toggle = document.getElementById('maintenance-toggle');
+    try {
+        const response = await fetch('/api/admin/toggle-maintenance', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ enabled: toggle.checked })
+        });
+        
+        if (!response.ok) {
+            toggle.checked = !toggle.checked;
+            alert('Failed to toggle maintenance mode');
+        }
+    } catch (error) {
+        toggle.checked = !toggle.checked;
+        alert('Error toggling maintenance mode');
+    }
+}
+
+async function viewReports() {
+    const container = document.getElementById('reports-list');
+    const isHidden = container.classList.contains('hidden');
+    
+    if (isHidden) {
+        try {
+            const response = await fetch('/api/admin/reports');
+            const reports = await response.json();
+            
+            container.innerHTML = '';
+            
+            if (reports.length === 0) {
+                container.innerHTML = '<p style="text-align: center; color: var(--text-secondary);">No reports found</p>';
+            } else {
+                reports.forEach(report => {
+                    const reportDiv = document.createElement('div');
+                    reportDiv.className = 'report-item';
+                    reportDiv.innerHTML = `
+                        <div class="report-header">
+                            <span class="report-id">#${report.reportId}</span>
+                            <span class="report-status ${report.status}">${report.status.toUpperCase()}</span>
+                        </div>
+                        <div class="report-meta">
+                            ${report.reportType.replace('_', ' ').toUpperCase()} | 
+                            ${report.urgencyLevel.toUpperCase()} | 
+                            ${new Date(report.createdAt).toLocaleString()}
+                        </div>
+                        <div class="report-description">${report.description}</div>
+                        <div style="margin-top: 10px;">
+                            <button onclick="updateReportStatus('${report._id}', 'reviewed')" class="admin-btn" style="font-size: 12px; padding: 5px 10px;">Mark Reviewed</button>
+                            <button onclick="updateReportStatus('${report._id}', 'resolved')" class="admin-btn" style="font-size: 12px; padding: 5px 10px;">Mark Resolved</button>
+                        </div>
+                    `;
+                    container.appendChild(reportDiv);
+                });
+            }
+            
+            container.classList.remove('hidden');
+        } catch (error) {
+            alert('Error loading reports');
+        }
+    } else {
+        container.classList.add('hidden');
+    }
+}
+
+async function updateReportStatus(reportId, status) {
+    try {
+        const response = await fetch('/api/admin/update-report', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ reportId, status })
+        });
+        
+        if (response.ok) {
+            viewReports(); // Refresh the reports list
+        } else {
+            alert('Failed to update report status');
+        }
+    } catch (error) {
+        alert('Error updating report status');
+    }
+}
+
+async function loadSiteSettings() {
+    if (currentUser && currentUser.accountType === 'admin') {
+        try {
+            const response = await fetch('/api/admin/site-settings');
+            const settings = await response.json();
+            
+            document.getElementById('shutdown-toggle').checked = settings.shutdownMode;
+            document.getElementById('maintenance-toggle').checked = settings.maintenanceMode;
+        } catch (error) {
+            console.error('Error loading site settings:', error);
+        }
+    }
+}
+
+async function enableUser(userId) {
+    if (!confirm('Are you sure you want to enable this user?')) return;
+    
+    try {
+        const response = await fetch('/api/admin/enable-user', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ userId })
+        });
+        
+        if (response.ok) {
+            loadAllUsers();
+            alert('User enabled successfully');
+        } else {
+            alert('Failed to enable user');
+        }
+    } catch (error) {
+        alert('Failed to enable user');
     }
 }
 
