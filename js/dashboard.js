@@ -4,10 +4,12 @@ let currentChatUser = null;
 let timerInterval = null;
 
 // Initialize dashboard
-function initDashboard() {
+async function initDashboard() {
     loadThemeFromStorage();
-    loadSiteSettings();
-    loadUserInfo();
+    await loadUserInfo();
+    await loadSiteSettings();
+    setupSocketConnection();
+    startTimerIfNeeded();
     loadGames();
 }
 
@@ -28,19 +30,25 @@ async function loadUserInfo() {
         const data = await response.json();
         currentUser = data.user;
         
-        document.getElementById('username').textContent = currentUser.username;
+        const usernameEl = document.getElementById('username');
+        if (usernameEl) usernameEl.textContent = currentUser.username;
         
         const accountBadge = document.getElementById('account-type');
-        accountBadge.textContent = currentUser.accountType;
-        accountBadge.className = `account-badge ${currentUser.accountType}`;
+        if (accountBadge) {
+            accountBadge.textContent = currentUser.accountType;
+            accountBadge.className = `account-badge ${currentUser.accountType}`;
+        }
         
         // Show appropriate UI elements based on account type
         if (currentUser.accountType === 'temporary') {
-            document.getElementById('temp-timer').classList.remove('hidden');
+            const tempTimer = document.getElementById('temp-timer');
+            if (tempTimer) tempTimer.classList.remove('hidden');
         } else {
-            document.getElementById('perm-icons').classList.remove('hidden');
+            const permIcons = document.getElementById('perm-icons');
+            if (permIcons) permIcons.classList.remove('hidden');
             if (currentUser.accountType === 'admin') {
-                document.getElementById('admin-btn').style.display = 'flex';
+                const adminBtn = document.getElementById('admin-btn');
+                if (adminBtn) adminBtn.style.display = 'flex';
             }
         }
     } catch (error) {
@@ -65,8 +73,10 @@ function startTimerIfNeeded() {
             
             const minutes = Math.floor(timeLeft / 60000);
             const seconds = Math.floor((timeLeft % 60000) / 1000);
-            document.getElementById('timer-text').textContent = 
-                `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+            const timerText = document.getElementById('timer-text');
+            if (timerText) {
+                timerText.textContent = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+            }
         }, 1000);
     }
 }
@@ -383,12 +393,12 @@ document.addEventListener('keypress', (e) => {
 async function loadAllUsers() {
     try {
         const response = await fetch('/api/admin/users');
-        const data = await response.json();
+        const users = await response.json();
         
         const usersList = document.getElementById('all-users-list');
         usersList.innerHTML = '';
         
-        data.users.forEach(user => {
+        users.forEach(user => {
             const userDiv = document.createElement('div');
             userDiv.className = 'user-item';
             
@@ -421,12 +431,12 @@ async function searchAllUsers() {
     
     try {
         const response = await fetch(`/api/admin/users?search=${encodeURIComponent(query)}`);
-        const data = await response.json();
+        const users = await response.json();
         
         const usersList = document.getElementById('all-users-list');
         usersList.innerHTML = '';
         
-        data.users.forEach(user => {
+        users.forEach(user => {
             const userDiv = document.createElement('div');
             userDiv.className = 'user-item';
             
@@ -640,10 +650,15 @@ async function loadSiteSettings() {
     if (currentUser && currentUser.accountType === 'admin') {
         try {
             const response = await fetch('/api/admin/site-settings');
-            const settings = await response.json();
-            
-            document.getElementById('shutdown-toggle').checked = settings.shutdownMode;
-            document.getElementById('maintenance-toggle').checked = settings.maintenanceMode;
+            if (response.ok) {
+                const settings = await response.json();
+                
+                const shutdownToggle = document.getElementById('shutdown-toggle');
+                const maintenanceToggle = document.getElementById('maintenance-toggle');
+                
+                if (shutdownToggle) shutdownToggle.checked = settings.shutdownMode;
+                if (maintenanceToggle) maintenanceToggle.checked = settings.maintenanceMode;
+            }
         } catch (error) {
             console.error('Error loading site settings:', error);
         }

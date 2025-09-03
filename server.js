@@ -303,7 +303,14 @@ app.get('/api/messages/:userId', requireAuth, requirePermanentAccount, async (re
 // Admin routes
 app.get('/api/admin/users', requireAuth, requireAdmin, async (req, res) => {
   try {
-    const users = await User.find({}, '-password').sort({ createdAt: -1 });
+    const { search } = req.query;
+    let query = {};
+    
+    if (search) {
+      query.username = { $regex: search, $options: 'i' };
+    }
+    
+    const users = await User.find(query, '-password').sort({ createdAt: -1 });
     res.json(users);
   } catch (error) {
     res.status(500).json({ message: 'Failed to fetch users' });

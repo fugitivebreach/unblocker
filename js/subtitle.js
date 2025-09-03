@@ -28,7 +28,6 @@ function getRandomGreeting() {
     "Sponsored by Honey!",
     "Sponsored by 3kh0!",
     "Piplup is cute",
-    "3kh0 is a bozo",
     "Powered by 128 Gigs of RAM!",
     "Powered by 16MB of RAM!",
     "I'm Slim Shady, yes, I'm the real Shady!",
