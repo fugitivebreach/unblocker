@@ -15,11 +15,11 @@ const io = socketIo(server);
 const PORT = process.env.PORT || 3000;
 
 // MongoDB connection
-mongoose.connect('mongodb://localhost:27017/3kh0-lite', {
+mongoose.connect('mongodb+srv://arrowsbritisharmy:cXgXOnuDac4RnAbP@unblockedsitedb.suidun3.mongodb.net/?retryWrites=true&w=majority&appName=unblockedsitedb', {
   useNewUrlParser: true,
   useUnifiedTopology: true
 }).then(() => {
-  console.log('Connected to MongoDB');
+  console.log('Connected to MongoDB Atlas');
   createAdminAccount();
 }).catch(err => {
   console.error('MongoDB connection error:', err);
