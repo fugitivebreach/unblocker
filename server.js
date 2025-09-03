@@ -317,7 +317,7 @@ app.get('/api/admin/users', requireAuth, requireAdmin, async (req, res) => {
   }
 });
 
-app.post('/api/admin/disable-user', requireAdmin, async (req, res) => {
+app.post('/api/admin/disable-user', requireAuth, requireAdmin, async (req, res) => {
   try {
     const { userId } = req.body;
     await User.findByIdAndUpdate(userId, { isActive: false });
@@ -327,7 +327,7 @@ app.post('/api/admin/disable-user', requireAdmin, async (req, res) => {
   }
 });
 
-app.post('/api/admin/enable-user', requireAdmin, async (req, res) => {
+app.post('/api/admin/enable-user', requireAuth, requireAdmin, async (req, res) => {
   try {
     const { userId } = req.body;
     await User.findByIdAndUpdate(userId, { isActive: true });
@@ -338,7 +338,7 @@ app.post('/api/admin/enable-user', requireAdmin, async (req, res) => {
 });
 
 // Site settings routes
-app.get('/api/admin/site-settings', requireAdmin, async (req, res) => {
+app.get('/api/admin/site-settings', requireAuth, requireAdmin, async (req, res) => {
   try {
     let settings = await SiteSettings.findOne();
     if (!settings) {
@@ -351,7 +351,7 @@ app.get('/api/admin/site-settings', requireAdmin, async (req, res) => {
   }
 });
 
-app.post('/api/admin/toggle-shutdown', requireAdmin, async (req, res) => {
+app.post('/api/admin/toggle-shutdown', requireAuth, requireAdmin, async (req, res) => {
   try {
     const { enabled } = req.body;
     let settings = await SiteSettings.findOne();
@@ -360,7 +360,7 @@ app.post('/api/admin/toggle-shutdown', requireAdmin, async (req, res) => {
     }
     settings.shutdownMode = enabled;
     settings.lastUpdated = new Date();
-    settings.updatedBy = req.session.user._id;
+    settings.updatedBy = req.user._id;
     await settings.save();
     res.json({ message: 'Shutdown mode updated' });
   } catch (error) {
@@ -368,7 +368,7 @@ app.post('/api/admin/toggle-shutdown', requireAdmin, async (req, res) => {
   }
 });
 
-app.post('/api/admin/toggle-maintenance', requireAdmin, async (req, res) => {
+app.post('/api/admin/toggle-maintenance', requireAuth, requireAdmin, async (req, res) => {
   try {
     const { enabled } = req.body;
     let settings = await SiteSettings.findOne();
@@ -377,7 +377,7 @@ app.post('/api/admin/toggle-maintenance', requireAdmin, async (req, res) => {
     }
     settings.maintenanceMode = enabled;
     settings.lastUpdated = new Date();
-    settings.updatedBy = req.session.user._id;
+    settings.updatedBy = req.user._id;
     await settings.save();
     res.json({ message: 'Maintenance mode updated' });
   } catch (error) {
@@ -414,7 +414,7 @@ app.post('/api/submit-report', requireAuth, async (req, res) => {
   }
 });
 
-app.get('/api/admin/reports', requireAdmin, async (req, res) => {
+app.get('/api/admin/reports', requireAuth, requireAdmin, async (req, res) => {
   try {
     const reports = await Report.find()
       .populate('reportedBy', 'username accountType')
@@ -425,7 +425,7 @@ app.get('/api/admin/reports', requireAdmin, async (req, res) => {
   }
 });
 
-app.post('/api/admin/update-report', requireAdmin, async (req, res) => {
+app.post('/api/admin/update-report', requireAuth, requireAdmin, async (req, res) => {
   try {
     const { reportId, status } = req.body;
     await Report.findByIdAndUpdate(reportId, { status });
