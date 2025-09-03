@@ -262,3 +262,20 @@ button[type="button"]:hover {
     margin-bottom: 15px;
     text-align: center;
 }
+
+.copyright-footer {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    background: rgba(0, 0, 0, 0.8);
+    color: white;
+    text-align: center;
+    padding: 10px 0;
+    font-size: 12px;
+    backdrop-filter: blur(10px);
+}
+
+.copyright-footer p {
+    margin: 0;
+}
