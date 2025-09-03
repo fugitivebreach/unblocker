@@ -13,33 +13,76 @@
         
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: #000000;
             min-height: 100vh;
             display: flex;
             align-items: center;
             justify-content: center;
             color: white;
+            overflow: hidden;
+        }
+        
+        .animation-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+        }
+        
+        .rotating-circle {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 300px;
+            height: 300px;
+            background: radial-gradient(circle, rgba(34, 197, 94, 0.8) 0%, rgba(34, 197, 94, 0.3) 40%, transparent 70%);
+            border-radius: 50%;
+            filter: blur(20px);
+            transform: translate(-50%, -50%);
+            animation: rotate 4s linear infinite;
+        }
+        
+        @keyframes rotate {
+            from { transform: translate(-50%, -50%) rotate(0deg); }
+            to { transform: translate(-50%, -50%) rotate(360deg); }
+        }
+        
+        .particle {
+            position: absolute;
+            width: 4px;
+            height: 4px;
+            background: white;
+            border-radius: 50%;
+            opacity: 0.8;
         }
         
         .maintenance-container {
             text-align: center;
-            background: rgba(255, 255, 255, 0.1);
+            background: rgba(0, 0, 0, 0.7);
             padding: 60px 40px;
             border-radius: 20px;
             backdrop-filter: blur(10px);
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+            border: 1px solid rgba(34, 197, 94, 0.3);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5);
             max-width: 600px;
+            z-index: 10;
+            position: relative;
         }
         
         .maintenance-icon {
             font-size: 80px;
             margin-bottom: 30px;
+            filter: drop-shadow(0 0 10px rgba(34, 197, 94, 0.5));
         }
         
         h1 {
             font-size: 2.5em;
             margin-bottom: 20px;
             font-weight: 700;
+            color: #22c55e;
+            text-shadow: 0 0 20px rgba(34, 197, 94, 0.5);
         }
         
         p {
@@ -53,16 +96,17 @@
             display: inline-block;
             width: 12px;
             height: 12px;
-            background: #ffd43b;
+            background: #22c55e;
             border-radius: 50%;
             margin-right: 8px;
             animation: pulse 2s infinite;
+            box-shadow: 0 0 10px rgba(34, 197, 94, 0.7);
         }
         
         @keyframes pulse {
-            0% { opacity: 1; }
-            50% { opacity: 0.5; }
-            100% { opacity: 1; }
+            0% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.5; transform: scale(1.2); }
+            100% { opacity: 1; transform: scale(1); }
         }
         
         .footer {
@@ -73,10 +117,15 @@
             text-align: center;
             color: rgba(255, 255, 255, 0.7);
             font-size: 12px;
+            z-index: 10;
         }
     </style>
 </head>
 <body>
+    <div class="animation-container">
+        <div class="rotating-circle"></div>
+    </div>
+    
     <div class="maintenance-container">
         <div class="maintenance-icon">🔧</div>
         <h1>Site Under Maintenance</h1>
@@ -88,5 +137,65 @@
     <div class="footer">
         <p>&copy; 2025 ArchiveAnt. All rights reserved.</p>
     </div>
+
+    <script>
+        // Create bouncing white particles
+        function createParticle() {
+            const particle = document.createElement('div');
+            particle.className = 'particle';
+            
+            // Random starting position
+            const startX = Math.random() * window.innerWidth;
+            const startY = Math.random() * window.innerHeight;
+            
+            particle.style.left = startX + 'px';
+            particle.style.top = startY + 'px';
+            
+            // Random velocity
+            let vx = (Math.random() - 0.5) * 4;
+            let vy = (Math.random() - 0.5) * 4;
+            
+            document.querySelector('.animation-container').appendChild(particle);
+            
+            function animate() {
+                const rect = particle.getBoundingClientRect();
+                let x = rect.left + vx;
+                let y = rect.top + vy;
+                
+                // Bounce off walls
+                if (x <= 0 || x >= window.innerWidth - 4) {
+                    vx = -vx;
+                }
+                if (y <= 0 || y >= window.innerHeight - 4) {
+                    vy = -vy;
+                }
+                
+                particle.style.left = Math.max(0, Math.min(window.innerWidth - 4, x)) + 'px';
+                particle.style.top = Math.max(0, Math.min(window.innerHeight - 4, y)) + 'px';
+                
+                requestAnimationFrame(animate);
+            }
+            
+            animate();
+        }
+        
+        // Create 15 particles
+        for (let i = 0; i < 15; i++) {
+            setTimeout(() => createParticle(), i * 200);
+        }
+        
+        // Handle window resize
+        window.addEventListener('resize', () => {
+            // Remove existing particles and recreate them
+            const particles = document.querySelectorAll('.particle');
+            particles.forEach(p => p.remove());
+            
+            setTimeout(() => {
+                for (let i = 0; i < 15; i++) {
+                    setTimeout(() => createParticle(), i * 50);
+                }
+            }, 100);
+        });
+    </script>
 </body>
 </html>
