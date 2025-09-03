@@ -17,6 +17,10 @@ async function loadUserInfo() {
     try {
         const response = await fetch('/api/check-auth');
         if (!response.ok) {
+            const errorData = await response.json().catch(() => ({}));
+            if (response.status === 401 && errorData.message === 'User not found or inactive') {
+                alert('Your account has been disabled by an administrator.');
+            }
             window.location.href = '/';
             return;
         }
