@@ -48,7 +48,9 @@ async function loadUserInfo() {
             if (permIcons) permIcons.classList.remove('hidden');
             if (currentUser.accountType === 'admin') {
                 const adminBtn = document.getElementById('admin-btn');
+                const adminToggles = document.getElementById('admin-toggles');
                 if (adminBtn) adminBtn.style.display = 'flex';
+                if (adminToggles) adminToggles.style.display = 'flex';
             }
         }
     } catch (error) {
@@ -545,39 +547,43 @@ function openReport() {
 }
 
 async function toggleShutdown() {
-    const toggle = document.getElementById('shutdown-toggle');
+    const btn = document.getElementById('shutdown-btn');
+    const isActive = btn.classList.contains('active');
+    
     try {
         const response = await fetch('/api/admin/toggle-shutdown', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ enabled: toggle.checked })
+            body: JSON.stringify({ enabled: !isActive })
         });
         
-        if (!response.ok) {
-            toggle.checked = !toggle.checked;
+        if (response.ok) {
+            btn.classList.toggle('active');
+        } else {
             alert('Failed to toggle shutdown mode');
         }
     } catch (error) {
-        toggle.checked = !toggle.checked;
         alert('Error toggling shutdown mode');
     }
 }
 
 async function toggleMaintenance() {
-    const toggle = document.getElementById('maintenance-toggle');
+    const btn = document.getElementById('maintenance-btn');
+    const isActive = btn.classList.contains('active');
+    
     try {
         const response = await fetch('/api/admin/toggle-maintenance', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ enabled: toggle.checked })
+            body: JSON.stringify({ enabled: !isActive })
         });
         
-        if (!response.ok) {
-            toggle.checked = !toggle.checked;
+        if (response.ok) {
+            btn.classList.toggle('active');
+        } else {
             alert('Failed to toggle maintenance mode');
         }
     } catch (error) {
-        toggle.checked = !toggle.checked;
         alert('Error toggling maintenance mode');
     }
 }
@@ -653,11 +659,11 @@ async function loadSiteSettings() {
             if (response.ok) {
                 const settings = await response.json();
                 
-                const shutdownToggle = document.getElementById('shutdown-toggle');
-                const maintenanceToggle = document.getElementById('maintenance-toggle');
+                const shutdownBtn = document.getElementById('shutdown-btn');
+                const maintenanceBtn = document.getElementById('maintenance-btn');
                 
-                if (shutdownToggle) shutdownToggle.checked = settings.shutdownMode;
-                if (maintenanceToggle) maintenanceToggle.checked = settings.maintenanceMode;
+                if (shutdownBtn && settings.shutdownMode) shutdownBtn.classList.add('active');
+                if (maintenanceBtn && settings.maintenanceMode) maintenanceBtn.classList.add('active');
             }
         } catch (error) {
             console.error('Error loading site settings:', error);

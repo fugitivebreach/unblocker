@@ -115,6 +115,63 @@ body {
     align-items: center;
 }
 
+.admin-toggles {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    margin-left: 15px;
+}
+
+.toggle-btn {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    padding: 8px 12px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 12px;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    min-width: 80px;
+}
+
+.toggle-btn.shutdown {
+    background: rgba(255, 107, 107, 0.2);
+    color: #ff6b6b;
+    border: 1px solid rgba(255, 107, 107, 0.3);
+}
+
+.toggle-btn.shutdown.active {
+    background: #ff6b6b;
+    color: white;
+    box-shadow: 0 0 15px rgba(255, 107, 107, 0.4);
+}
+
+.toggle-btn.maintenance {
+    background: rgba(255, 193, 7, 0.2);
+    color: #ffc107;
+    border: 1px solid rgba(255, 193, 7, 0.3);
+}
+
+.toggle-btn.maintenance.active {
+    background: #ffc107;
+    color: #000;
+    box-shadow: 0 0 15px rgba(255, 193, 7, 0.4);
+}
+
+.toggle-btn:hover {
+    transform: translateY(-2px);
+}
+
+.toggle-icon {
+    font-size: 14px;
+}
+
+.toggle-text {
+    font-size: 11px;
+}
+
 .perm-icons.hidden {
     display: none;
 }
