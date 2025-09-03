@@ -299,6 +299,12 @@ app.get('/', redirectIfAuthenticated, (req, res) => {
   res.sendFile(path.join(__dirname, 'login.html'));
 });
 
+// API route to get games
+app.get('/api/games', (req, res) => {
+  const games = require('./config/games.json');
+  res.json(games);
+});
+
 // Protect dashboard
 app.get('/dashboard.html', requireAuth, (req, res) => {
   res.sendFile(path.join(__dirname, 'dashboard.html'));

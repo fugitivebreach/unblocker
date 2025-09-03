@@ -10,6 +10,7 @@ window.addEventListener('load', async () => {
     loadFriends();
     loadFriendRequests();
     startTimerIfNeeded();
+    loadGames();
 });
 
 async function loadUserInfo() {
@@ -473,6 +474,33 @@ async function disableUser(userId) {
 async function updateMessageNotifications() {
     // This would typically check for unread messages and update the badge
     // For now, we'll keep it simple
+}
+
+async function loadGames() {
+    try {
+        const response = await fetch('/api/games');
+        const games = await response.json();
+        
+        const gamesGrid = document.querySelector('.games-grid');
+        gamesGrid.innerHTML = '';
+        
+        games.forEach(game => {
+            const gameCard = document.createElement('div');
+            gameCard.className = 'game-card';
+            gameCard.onclick = () => window.open(game.link, '_blank');
+            
+            gameCard.innerHTML = `
+                <img src="${game.imgSrc}" alt="${game.title}" onerror="this.src='data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTAwIiBoZWlnaHQ9IjEwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMTAwIiBoZWlnaHQ9IjEwMCIgZmlsbD0iI2VlZSIvPjx0ZXh0IHg9IjUwIiB5PSI1MCIgZm9udC1mYW1pbHk9IkFyaWFsIiBmb250LXNpemU9IjE0IiBmaWxsPSIjOTk5IiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBkeT0iLjNlbSI+R2FtZTwvdGV4dD48L3N2Zz4='" style="width: 100%; height: 120px; object-fit: cover; border-radius: 8px; margin-bottom: 10px;">
+                <h3>${game.title}</h3>
+            `;
+            
+            gamesGrid.appendChild(gameCard);
+        });
+    } catch (error) {
+        console.error('Failed to load games:', error);
+        const gamesGrid = document.querySelector('.games-grid');
+        gamesGrid.innerHTML = '<p style="text-align: center; color: #666;">Failed to load games</p>';
+    }
 }
 
 async function logout() {
