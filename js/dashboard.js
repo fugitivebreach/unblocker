@@ -5,6 +5,7 @@ let timerInterval = null;
 
 // Initialize dashboard
 window.addEventListener('load', async () => {
+    loadThemeFromStorage();
     await loadUserInfo();
     setupSocketConnection();
     loadFriends();
@@ -504,6 +505,29 @@ async function loadGames() {
         console.error('Failed to load games:', error);
         const gamesGrid = document.querySelector('.games-grid');
         gamesGrid.innerHTML = '<p style="text-align: center; color: #666;">Failed to load games</p>';
+    }
+}
+
+function toggleTheme() {
+    const currentTheme = document.documentElement.getAttribute('data-theme');
+    const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+    
+    document.documentElement.setAttribute('data-theme', newTheme);
+    localStorage.setItem('theme', newTheme);
+    
+    // Update theme icon
+    const themeIcon = document.getElementById('theme-icon');
+    themeIcon.textContent = newTheme === 'dark' ? '☀️' : '🌙';
+}
+
+function loadThemeFromStorage() {
+    const savedTheme = localStorage.getItem('theme') || 'light';
+    document.documentElement.setAttribute('data-theme', savedTheme);
+    
+    // Update theme icon
+    const themeIcon = document.getElementById('theme-icon');
+    if (themeIcon) {
+        themeIcon.textContent = savedTheme === 'dark' ? '☀️' : '🌙';
     }
 }
 
