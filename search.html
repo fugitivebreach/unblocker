@@ -24,13 +24,46 @@
     </div>
     
     <div class="search-container">
-        <div class="search-wrapper">
-            <iframe 
-                id="search-frame" 
-                src="https://searx.be/" 
-                frameborder="0"
-                allowfullscreen>
-            </iframe>
+        <div class="search-form-wrapper">
+            <div class="search-engines">
+                <div class="engine-tabs">
+                    <button class="engine-tab active" data-engine="duckduckgo">DuckDuckGo</button>
+                    <button class="engine-tab" data-engine="startpage">Startpage</button>
+                    <button class="engine-tab" data-engine="searx">SearXNG</button>
+                    <button class="engine-tab" data-engine="bing">Bing</button>
+                </div>
+                
+                <div class="search-form">
+                    <div class="search-input-container">
+                        <span class="search-icon">🔍</span>
+                        <input type="text" id="search-query" placeholder="Search the web..." onkeypress="handleSearchKeypress(event)">
+                        <button class="search-btn" onclick="performSearch()">Search</button>
+                    </div>
+                    
+                    <div class="search-options">
+                        <label class="option">
+                            <input type="checkbox" id="safe-search" checked>
+                            <span>Safe Search</span>
+                        </label>
+                        <label class="option">
+                            <input type="checkbox" id="new-tab">
+                            <span>Open in New Tab</span>
+                        </label>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="popular-searches">
+                <h3>Popular Searches</h3>
+                <div class="quick-searches">
+                    <button class="quick-search" onclick="quickSearch('weather')">Weather</button>
+                    <button class="quick-search" onclick="quickSearch('news')">News</button>
+                    <button class="quick-search" onclick="quickSearch('youtube')">YouTube</button>
+                    <button class="quick-search" onclick="quickSearch('github')">GitHub</button>
+                    <button class="quick-search" onclick="quickSearch('stackoverflow')">Stack Overflow</button>
+                    <button class="quick-search" onclick="quickSearch('wikipedia')">Wikipedia</button>
+                </div>
+            </div>
         </div>
     </div>
     
