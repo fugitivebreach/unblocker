@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>3kh0-lite - Search</title>
+    <link rel="stylesheet" href="css/search.css">
+</head>
+<body>
+    <div class="header">
+        <div class="nav-controls">
+            <button class="back-btn" onclick="goBack()">← Back to Dashboard</button>
+            <div class="search-title">
+                <span class="search-icon">🔍</span>
+                <h1>Web Search</h1>
+            </div>
+        </div>
+        
+        <div class="theme-toggle">
+            <div class="icon-btn" id="theme-btn" onclick="toggleTheme()">
+                <span class="icon" id="theme-icon">🌙</span>
+            </div>
+        </div>
+    </div>
+    
+    <div class="search-container">
+        <div class="search-wrapper">
+            <iframe 
+                id="duckduckgo-frame" 
+                src="https://duckduckgo.com/" 
+                frameborder="0"
+                allowfullscreen>
+            </iframe>
+        </div>
+    </div>
+    
+    <script src="js/search.js"></script>
+</body>
+</html>

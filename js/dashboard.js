@@ -694,79 +694,12 @@ async function enableUser(userId) {
 
 // Search functionality
 function toggleSearch() {
-    const searchPanel = document.getElementById('search-panel');
-    const isHidden = searchPanel.classList.contains('hidden');
-    
-    // Close other panels
-    closeAllPanels();
-    
-    if (isHidden) {
-        searchPanel.classList.remove('hidden');
-        document.getElementById('search-input').focus();
-    } else {
-        searchPanel.classList.add('hidden');
-    }
+    window.location.href = '/search.html';
 }
 
-function handleSearchKeypress(event) {
-    if (event.key === 'Enter') {
-        performSearch();
-    }
-}
-
-function performSearch() {
-    const searchInput = document.getElementById('search-input');
-    const query = searchInput.value.trim();
-    
-    if (!query) {
-        alert('Please enter a search term');
-        return;
-    }
-    
-    // Get search options
-    const safeSearch = document.getElementById('safe-search').checked;
-    const region = document.getElementById('search-region').value;
-    
-    // Build DuckDuckGo URL with parameters
-    let searchUrl = 'https://duckduckgo.com/?q=' + encodeURIComponent(query);
-    
-    // Add safe search parameter
-    if (!safeSearch) {
-        searchUrl += '&kp=-2'; // Disable safe search
-    }
-    
-    // Add region parameter
-    if (region && region !== 'wt-wt') {
-        searchUrl += '&kl=' + region;
-    }
-    
-    // Show the iframe container
-    const iframeContainer = document.getElementById('search-iframe-container');
-    const iframe = document.getElementById('search-iframe');
-    const queryDisplay = document.getElementById('current-search-query');
-    
-    iframeContainer.classList.remove('hidden');
-    iframe.src = searchUrl;
-    queryDisplay.textContent = `"${query}"`;
-    
-    // Clear the search input
-    searchInput.value = '';
-}
-
-function closeSearchResults() {
-    const iframeContainer = document.getElementById('search-iframe-container');
-    const iframe = document.getElementById('search-iframe');
-    
-    iframeContainer.classList.add('hidden');
-    iframe.src = '';
-    
-    // Focus back on search input
-    document.getElementById('search-input').focus();
-}
-
-// Update closeAllPanels to include search panel
+// Update closeAllPanels to exclude search panel since it's now a separate page
 function closeAllPanels() {
-    const panels = ['messages-panel', 'friends-panel', 'admin-panel', 'search-panel'];
+    const panels = ['messages-panel', 'friends-panel', 'admin-panel'];
     panels.forEach(panelId => {
         const panel = document.getElementById(panelId);
         if (panel) panel.classList.add('hidden');
