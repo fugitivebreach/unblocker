@@ -31,7 +31,7 @@ function initSearchPage() {
     loadThemeFromStorage();
     
     // Handle iframe loading
-    const iframe = document.getElementById('duckduckgo-frame');
+    const iframe = document.getElementById('search-frame');
     if (iframe) {
         iframe.addEventListener('load', function() {
             iframe.classList.add('loaded');
